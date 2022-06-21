@@ -19,18 +19,14 @@ class Counterparty(models.Model):
     def __str__(self):
         return self.name
 
+
 class Contract(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название договора')
-    counterparty = models.ForeignKey(
-        'Counterparty',
-        on_delete=models.PROTECT,
-        null=True,
-        verbose_name='Контрагент')
+    counterparty = models.ForeignKey('Counterparty', on_delete=models.PROTECT, null=True, verbose_name='Контрагент')
     number = models.CharField(max_length=50, verbose_name='№', blank=True)
-    date = models.DateField(
-        verbose_name='Дата договора',
-        blank=True,
-        null=True)
+    date = models.DateField(verbose_name='Дата договора',
+                            blank=True,
+                            null=True)
     sum = models.DecimalField(
         max_digits=25,
         decimal_places=2,
@@ -78,6 +74,7 @@ class Contract(models.Model):
         if not self.sum_with_nds and self.be_nds:
             self.sum_with_nds = round(self.sum * decimal.Decimal('1.20'), 2)
         super().save(*args, **kwargs)
+
 
 class PaymentStages(models.Model):
     title = models.CharField(max_length=150,
@@ -144,6 +141,7 @@ class PaymentStages(models.Model):
             self.contract.sum_with_nds = sum_with_nds_
         self.contract.save()
 
+
 class SignActStages(models.Model):
     title = models.CharField(max_length=150,
                              verbose_name='Название этапа актирования')
@@ -191,6 +189,7 @@ class SignActStages(models.Model):
         if not self.sum_with_nds and self.be_nds:
             self.sum_with_nds = round(self.sum * decimal.Decimal('1.20'), 2)
         super().save(*args, **kwargs)
+
 
 class Payment(models.Model):
     counterparty = models.ForeignKey(

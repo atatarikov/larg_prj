@@ -5,7 +5,8 @@ from django.db import connection
 
 from finance import models
 from finance.forms import CounterpartyForm, ContractForm, PaymentStagesForm, PaymentForm, PaymentStagesFilterForm, \
-    PaymentFilterForm, ContractFormList, PlanPerForm, ContractFilterForm, FinPlanFilterForm, SignActStagesForm, SignActStagesFilterForm
+    PaymentFilterForm, ContractFormList, PlanPerForm, ContractFilterForm, FinPlanFilterForm, SignActStagesForm, \
+    SignActStagesFilterForm
 from finance.models import Counterparty, Contract, PaymentStages, Payment, SignActStages
 
 from django.contrib.auth.decorators import login_required
@@ -155,7 +156,7 @@ FROM (SELECT DISTINCT finance_paymentstages.contract_id
                                            float(el[str(i)]), 2)
             if i == mounth_int:
                 data_sum['sum_delta'] = data_sum['sum_' + \
-                    key_fact] - data_sum['sum_' + key_plan]
+                                                 key_fact] - data_sum['sum_' + key_plan]
         if 'contract_sum' in el:
             data_sum['sum_contract_sum'] = round(
                 data_sum['sum_contract_sum'] + float(el['contract_sum']), 2)
@@ -267,7 +268,8 @@ FROM (SELECT DISTINCT finance_paymentstages.contract_id
       FROM finance_paymentstages AS finance_paymentstages WHERE finance_paymentstages.date BETWEEN %s AND %s) AS finance_paymentstages
          LEFT JOIN finance_contract AS finance_contract ON finance_paymentstages.contract_id = finance_contract.id
          LEFT JOIN finance_counterparty AS finance_counterparty
-                   ON finance_contract.counterparty_id = finance_counterparty.id WHERE finance_contract.is_plan = %s''', (start_data_now, end_data_next, is_plan))
+                   ON finance_contract.counterparty_id = finance_counterparty.id WHERE finance_contract.is_plan = %s''',
+                   (start_data_now, end_data_next, is_plan))
     qs = dictfetchall(cursor)
     for el in qs:
         insert_data = {
@@ -316,7 +318,7 @@ FROM (SELECT DISTINCT finance_paymentstages.contract_id
                                            float(el[str(i)]), 2)
             if i == mounth_int:
                 data_sum['sum_delta'] = data_sum['sum_' + \
-                    key_fact] - data_sum['sum_' + key_plan]
+                                                 key_fact] - data_sum['sum_' + key_plan]
         if 'contract_sum' in el:
             data_sum['sum_contract_sum'] = round(
                 data_sum['sum_contract_sum'] + float(el['contract_sum']), 2)
@@ -399,7 +401,8 @@ def plan_per(request):
                 iter_dict = {
                     'paymentstages_title': el['paymentstages_title'],
                     'counterparty_name': el['counterparty_name'],
-                    'contract': el['contract_title'] + ' (' + el['contract_number'] + ' от ' + el['contract_date'].strftime("%Y-%M-%d") + ')'}
+                    'contract': el['contract_title'] + ' (' + el['contract_number'] + ' от ' + el[
+                        'contract_date'].strftime("%Y-%M-%d") + ')'}
                 iter_sum_list = []
                 for _date in dates:
                     sum = 0
@@ -822,7 +825,7 @@ def create_table(model, object_name, objects_list, titles_list, fields_list):
     for object in objects_list:
         i += 1
         link_line = '<a href="../' + link_list + '/' + \
-            str(object_name) + '/' + str(object.id) + '">'
+                    str(object_name) + '/' + str(object.id) + '">'
         code_line += '''<tr>
   <th scope="row">''' + link_line + str(i) + '</a></th>'
         ii = 0
@@ -839,24 +842,24 @@ def create_table(model, object_name, objects_list, titles_list, fields_list):
             if key_field_value == '_no_':
                 if field_from_list == 'date' or field_from_list == 'sum':
                     code_line += '<td class="text-nowrap">' + \
-                        link_line + str(field_value) + '</a></td>'
+                                 link_line + str(field_value) + '</a></td>'
                 else:
                     code_line += '<td>' + link_line + \
-                        str(field_value) + '</a></td>'
+                                 str(field_value) + '</a></td>'
                 # code_line += '<td>' + link_line + str(field_value) + '</a></td>'
             elif key_field_value == '_fd_':
                 code_line += '<td class="text-nowrap">' + link_line + \
-                    return_correct_string(str(field_value)) + '</a></td>'
+                             return_correct_string(str(field_value)) + '</a></td>'
             elif key_field_value == '_b_':
                 if field_value:
                     field_value = '&#10003;'
                 else:
                     field_value = ''
                 code_line += '<td>' + link_line + \
-                    str(field_value) + '</a></td>'
+                             str(field_value) + '</a></td>'
             elif key_field_value == '_r_':
                 code_line += '<td class="text-nowrap">' + link_line + \
-                    return_result(object_name, field_from_list, object.id) + '</a></td>'
+                             return_result(object_name, field_from_list, object.id) + '</a></td>'
             else:
                 support_model = get_full_data_about_object(
                     field_from_list[0:1].upper() + field_from_list[1:])['model']
@@ -869,7 +872,7 @@ def create_table(model, object_name, objects_list, titles_list, fields_list):
                     field_value_ = field_object_.value_from_object(
                         support_object)
                     code_line += '<td>' + link_line + \
-                        str(field_value_) + '</a></td>'
+                                 str(field_value_) + '</a></td>'
                 else:
                     code_line += '<td>' + link_line + '</a></td>'
         code_line += '</tr>'
@@ -880,7 +883,7 @@ def create_table(model, object_name, objects_list, titles_list, fields_list):
 def create_button_list(object, request):
     link_list = get_full_data_about_object(object)['link_list']
     code_line = '<a href="../' + link_list + '/' + object + \
-        '" class="btn btn-success my-2 float-right" role="button">Добавить (+)</a>'
+                '" class="btn btn-success my-2 float-right" role="button">Добавить (+)</a>'
     return code_line
 
 
@@ -905,7 +908,7 @@ def create_button_add_edit(
     for i in range(i):
         code_line += '../'
     code_line += get_url_redirect(object, id) + \
-        '" class ="btn btn-info my-2" role="button">Отменить</a>'
+                 '" class ="btn btn-info my-2" role="button">Отменить</a>'
     if add_string:
         code_line += '''
         <button name = \'add_string\' type = "submit" class ="btn btn-secondary">Добавить строку</button>'''
@@ -941,7 +944,7 @@ def get_url_redirect(object, id):
         object_ps = PaymentStages.objects.get(pk=id)
         # return 'point_edit/Point/' + str(object_point.point.id)
         return 'default_list/' + str(object) + \
-            '?contract=' + str(object_ps.contract.id)
+               '?contract=' + str(object_ps.contract.id)
     else:
         return 'default_list/' + str(object)
 
@@ -950,7 +953,7 @@ def return_correct_string(string_integer):
     sum_1 = string_integer[-3:]
     reversed_string = string_integer[-4::-1]
     sum_2 = ' '.join([reversed_string[i:i + 3]
-                     for i in range(0, len(reversed_string), 3)])
+                      for i in range(0, len(reversed_string), 3)])
     reversed_string_2 = sum_2[::-1]
     return str(reversed_string_2) + str(sum_1)
 
